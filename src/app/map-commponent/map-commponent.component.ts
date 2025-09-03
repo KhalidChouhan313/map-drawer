@@ -1,8 +1,8 @@
 import { Component, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
-import 'leaflet-draw/dist/leaflet.draw.js';
+// import 'leaflet-draw/dist/leaflet.draw.js';
 
-import 'leaflet-draw';
+// import 'leaflet-draw';
 
 @Component({
   selector: 'app-map-commponent',
