@@ -8,14 +8,15 @@ import 'leaflet-draw';
   styleUrls: ['./map-commponent.component.css'],
 })
 export class MapCommponentComponent implements AfterViewInit {
-  map!: L.Map;
+  private map!: L.Map;
+  private activeDrawHandler: any = null; // apna handler track karne ke liye
 
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.initMap();
   }
 
-  initMap() {
-    this.map = L.map('map').setView([52.2053, 0.1218], 8);
+  private initMap(): void {
+    this.map = L.map('map').setView([51.505, -0.09], 4);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
@@ -24,79 +25,72 @@ export class MapCommponentComponent implements AfterViewInit {
     const drawnItems = new L.FeatureGroup();
     this.map.addLayer(drawnItems);
 
-    const drawControl = new L.Control.Draw({
-      edit: {
-        featureGroup: drawnItems,
+    const drawControl = new (L.Control.Draw as any)({
+      edit: { featureGroup: drawnItems },
+      draw: {
         polygon: {
           allowIntersection: true,
+          shapeOptions: { color: '#3388ff' },
         },
-      } as any,
-      draw: {
-        polygon: {},
+        polyline: { shapeOptions: { color: '#3388ff' } },
         rectangle: {},
         circle: {},
         marker: {},
-        polyline: {},
       },
     });
     this.map.addControl(drawControl);
 
-    this.map.on(L.Draw.Event.CREATED, (event: any) => {
+    this.map.on((L as any).Draw.Event.DRAWSTART, (e: any) => {
+      this.activeDrawHandler = e.handler;
+    });
+
+    this.map.on((L as any).Draw.Event.CREATED, (event: any) => {
+      this.activeDrawHandler = null;
       const layer = event.layer;
       drawnItems.addLayer(layer);
 
-      layer.on('click', () => {
-        const name = prompt('Enter name for the Area:');
-        if (!name) return;
-
+      const name = prompt('Enter name for the Area:');
+      if (name) {
         let center: L.LatLng | null = null;
 
-        if ((layer as any).getBounds) {
-          center = (layer as any).getBounds().getCenter();
-        } else if ((layer as any).getLatLng) {
-          center = (layer as any).getLatLng();
+        if (layer.getBounds) {
+          center = layer.getBounds().getCenter();
+        } else if (layer.getLatLng) {
+          center = layer.getLatLng();
         }
 
-        if (!center) {
-          console.warn('Center not found for this shape');
-          return;
+        if (center) {
+          const textIcon = L.divIcon({
+            className: 'area-label',
+            html: `<div style="
+              background: transparent;
+              width:100%;
+              border-radius:4px;
+              font-size:16px;        
+              font-weight:bold;
+              white-space: nowrap;">${name}</div>`,
+            iconSize: [0, 0],
+          });
+          L.marker(center, { icon: textIcon, interactive: false }).addTo(
+            this.map
+          );
         }
-
-        const textIcon = L.divIcon({
-          className: 'area-label',
-          html: `<div style="
-    background: transparent;
-    width:100%;
-    border-radius:4px;
-    font-size:16px;        
-    font-weight:bold;
-    white-space: nowrap;  
-  ">
-  ${name}</div>`,
-          iconSize: [0, 0],
-        });
-
-        L.marker(center, { icon: textIcon, interactive: false }).addTo(
-          this.map
-        );
-
         (layer as any).areaName = name;
-      });
-
-      if ((layer as any).getLatLngs) {
-        const coords = (layer as any)
-          .getLatLngs()[0]
-          .map((point: any) => ({ lat: point.lat, lng: point.lng }));
-        console.log('Polygon/Rect coords:', coords);
       }
+    });
 
-      if ((layer as any).getLatLng && (layer as any).getRadius) {
-        console.log('Circle center:', (layer as any).getLatLng());
-        console.log('Circle radius (meters):', (layer as any).getRadius());
-      }
-
-      if ((layer as any).getLatLng && !(layer as any).getRadius) {
-        console.log('Marker:', (layer as any).getLatLng());
+    this.map.on('draw:drawvertex', () => {
+      if (
+        this.activeDrawHandler &&
+        (this.activeDrawHandler instanceof (L.Draw as any).Polyline ||
+          this.activeDrawHandler instanceof (L.Draw as any).Polygon)
+      ) {
+        const latlngs = this.activeDrawHandler._markers.map((m: any) =>
+          m.getLatLng()
+        );
+        if (latlngs.length > 2) {
+          this.activeDrawHandler._finishShape();
+        }
       }
     });
   }
