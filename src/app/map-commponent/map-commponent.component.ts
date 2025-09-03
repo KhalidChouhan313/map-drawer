@@ -1,5 +1,7 @@
 import { Component, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
+import 'leaflet-draw/dist/leaflet.draw.js';
+
 import 'leaflet-draw';
 
 @Component({
@@ -9,8 +11,7 @@ import 'leaflet-draw';
 })
 export class MapCommponentComponent implements AfterViewInit {
   private map!: L.Map;
-  private activeDrawHandler: any = null; // apna handler track karne ke liye
-
+  private activeDrawHandler: any = null;
   ngAfterViewInit(): void {
     this.initMap();
   }
@@ -44,7 +45,7 @@ export class MapCommponentComponent implements AfterViewInit {
       this.activeDrawHandler = e.handler;
     });
 
-    this.map.on((L as any).Draw.Event.CREATED, (event: any) => {
+    this.map.on(L.Draw.Event.CREATED, (event: any) => {
       this.activeDrawHandler = null;
       const layer = event.layer;
       drawnItems.addLayer(layer);
