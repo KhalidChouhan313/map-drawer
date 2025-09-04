@@ -1,6 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
-import 'leaflet-draw';
+import 'leaflet-draw/dist/leaflet.draw.js';
 import 'leaflet-control-geocoder';
 
 @Component({
@@ -38,11 +38,9 @@ export class MapCommponentComponent implements AfterViewInit {
       })
       .addTo(this.map);
 
-    // Draw Feature Group
     const drawnItems = new L.FeatureGroup();
     this.map.addLayer(drawnItems);
 
-    // Draw Control
     const drawControl = new L.Control.Draw({
       edit: { featureGroup: drawnItems },
       draw: {
@@ -58,8 +56,7 @@ export class MapCommponentComponent implements AfterViewInit {
     });
     this.map.addControl(drawControl);
 
-    // Events
-    this.map.on(L.Draw.Event.CREATED as any, (event: any) => {
+    this.map.on('draw:created', (event: any) => {
       this.activeDrawHandler = null;
       const layer = event.layer;
       drawnItems.addLayer(layer);
