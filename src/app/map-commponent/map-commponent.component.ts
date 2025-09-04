@@ -24,7 +24,6 @@ export class MapCommponentComponent implements AfterViewInit {
       attribution: '&copy; OpenStreetMap contributors',
     }).addTo(this.map);
 
-    // Geocoder
     (L.Control as any)
       .geocoder({ defaultMarkGeocode: false })
       .on('markgeocode', (e: any) => {
@@ -60,7 +59,7 @@ export class MapCommponentComponent implements AfterViewInit {
     this.map.addControl(drawControl);
 
     // Events
-    this.map.on(L.Draw.Event.CREATED, (event: any) => {
+    this.map.on(L.Draw.Event.CREATED as any, (event: any) => {
       this.activeDrawHandler = null;
       const layer = event.layer;
       drawnItems.addLayer(layer);
@@ -95,7 +94,6 @@ export class MapCommponentComponent implements AfterViewInit {
       }
     });
 
-    // Auto finish shape
     this.map.on('draw:drawvertex', () => {
       if (
         this.activeDrawHandler &&
