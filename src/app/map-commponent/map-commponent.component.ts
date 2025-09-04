@@ -1,9 +1,7 @@
 import { Component, AfterViewInit } from '@angular/core';
-declare let L: any;
-// import * as L from 'leaflet';
-// // import 'leaflet-draw/dist/leaflet.draw.js';
-
-// // import 'leaflet-draw';
+import * as L from 'leaflet';
+import 'leaflet-draw';
+import 'leaflet-control-geocoder';
 
 @Component({
   selector: 'app-map-commponent',
@@ -13,21 +11,40 @@ declare let L: any;
 export class MapCommponentComponent implements AfterViewInit {
   private map!: L.Map;
   private activeDrawHandler: any = null;
+
   ngAfterViewInit(): void {
     this.initMap();
   }
 
   private initMap(): void {
+    // Map
     this.map = L.map('map').setView([51.505, -0.09], 4);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
     }).addTo(this.map);
 
+    // Geocoder
+    (L.Control as any)
+      .geocoder({ defaultMarkGeocode: false })
+      .on('markgeocode', (e: any) => {
+        const bbox = e.geocode.bbox;
+        const poly = L.polygon([
+          [bbox.getSouthEast().lat, bbox.getSouthEast().lng],
+          [bbox.getNorthEast().lat, bbox.getNorthEast().lng],
+          [bbox.getNorthWest().lat, bbox.getNorthWest().lng],
+          [bbox.getSouthWest().lat, bbox.getSouthWest().lng],
+        ]);
+        this.map.fitBounds(poly.getBounds());
+      })
+      .addTo(this.map);
+
+    // Draw Feature Group
     const drawnItems = new L.FeatureGroup();
     this.map.addLayer(drawnItems);
 
-    const drawControl = new (L.Control.Draw as any)({
+    // Draw Control
+    const drawControl = new L.Control.Draw({
       edit: { featureGroup: drawnItems },
       draw: {
         polygon: {
@@ -42,10 +59,7 @@ export class MapCommponentComponent implements AfterViewInit {
     });
     this.map.addControl(drawControl);
 
-    this.map.on((L as any).Draw.Event.DRAWSTART, (e: any) => {
-      this.activeDrawHandler = e.handler;
-    });
-
+    // Events
     this.map.on(L.Draw.Event.CREATED, (event: any) => {
       this.activeDrawHandler = null;
       const layer = event.layer;
@@ -55,10 +69,10 @@ export class MapCommponentComponent implements AfterViewInit {
       if (name) {
         let center: L.LatLng | null = null;
 
-        if (layer.getBounds) {
-          center = layer.getBounds().getCenter();
-        } else if (layer.getLatLng) {
-          center = layer.getLatLng();
+        if ((layer as any).getBounds) {
+          center = (layer as any).getBounds().getCenter();
+        } else if ((layer as any).getLatLng) {
+          center = (layer as any).getLatLng();
         }
 
         if (center) {
@@ -81,6 +95,7 @@ export class MapCommponentComponent implements AfterViewInit {
       }
     });
 
+    // Auto finish shape
     this.map.on('draw:drawvertex', () => {
       if (
         this.activeDrawHandler &&

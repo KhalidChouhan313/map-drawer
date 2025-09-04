@@ -1,0 +1,13 @@
+/* map-commponent.component.css */
+:host ::ng-deep .leaflet-touch .leaflet-control-layers,
+:host ::ng-deep .leaflet-touch .leaflet-bar {
+  border: none !important;
+}
+
+:host ::ng-deep .leaflet-control-geocoder-form-no-error {
+  display: none !important;
+}
+
+:host ::ng-deep .leaflet-control-geocoder-icon {
+  display: none !important;
+}
