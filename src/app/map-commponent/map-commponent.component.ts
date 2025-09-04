@@ -88,6 +88,29 @@ export class MapCommponentComponent implements AfterViewInit {
           );
         }
         (layer as any).areaName = name;
+        let coords: any;
+        if ((layer as any).getLatLngs) {
+          coords = (layer as any).getLatLngs()[0].map((ll: any) => ({
+            lat: ll.lat,
+            lng: ll.lng,
+          }));
+        } else if ((layer as any).getLatLng) {
+          const ll = (layer as any).getLatLng();
+          coords = { lat: ll.lat, lng: ll.lng };
+        }
+
+        const geoData = {
+          name: name,
+          type:
+            layer instanceof (L.Draw as any).Polygon
+              ? 'polygon'
+              : layer instanceof (L.Draw as any).Polyline
+              ? 'polyline'
+              : 'marker',
+          coordinates: coords,
+        };
+
+        console.log('GeoData to save:', geoData);
       }
     });
 
