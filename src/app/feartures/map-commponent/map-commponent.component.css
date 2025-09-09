@@ -1,0 +1,69 @@
+/* map-commponent.component.css */
+:host ::ng-deep .leaflet-touch .leaflet-control-layers,
+:host ::ng-deep .leaflet-touch .leaflet-bar {
+  border: none !important;
+}
+
+:host ::ng-deep .leaflet-control-geocoder-form-no-error {
+  display: none !important;
+}
+
+:host ::ng-deep .leaflet-control-geocoder-icon {
+  display: none !important;
+}
+:host ::ng-deep .leaflet-control-geosearch {
+  width: 10vw !important;
+  position: absolute !important;
+  top: 10px !important;
+  right: 1px !important;
+  left: 100% !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+}
+:host ::ng-deep .reset {
+  display: none !important;
+}
+:host ::ng-deep .leaflet-bar-part {
+  display: none !important;
+}
+
+.coverage-header {
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 24px;
+  background-color: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #e0e0e0;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+.title-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.title-section h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #000;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #666;
+  font-weight: 400;
+}
+.search-input {
+  height: 0px;
+  padding: 19px 20px 19px 20px;
+  align-items: center;
+  border-radius: 148px;
+  border: 1px solid rgba(46, 188, 150, 0.2);
+  background: rgba(255, 255, 255, 0.2);
+}
