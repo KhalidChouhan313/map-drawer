@@ -1,7 +1,8 @@
 import { Component, AfterViewInit } from '@angular/core';
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import * as L from 'leaflet';
 import 'leaflet-draw/dist/leaflet.draw.js';
-import 'leaflet-control-geocoder';
+// import 'leaflet-control-geocoder';
 
 @Component({
   selector: 'app-map-commponent',
@@ -17,26 +18,37 @@ export class MapCommponentComponent implements AfterViewInit {
   }
 
   private initMap(): void {
-    // Map
     this.map = L.map('map').setView([51.505, -0.09], 4);
-
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
     }).addTo(this.map);
+    const provider = new OpenStreetMapProvider();
+    const searchControl = new (GeoSearchControl as any)({
+      provider,
+      showMarker: true,
+      showPopup: false,
+      autoClose: true,
+      retainZoomLevel: false,
+      animateZoom: true,
+      searchLabel: 'Search for location',
+      keepResult: true,
+      position: 'topleft', // yeh important hai
+    });
+    this.map.addControl(searchControl);
 
-    (L.Control as any)
-      .geocoder({ defaultMarkGeocode: false })
-      .on('markgeocode', (e: any) => {
-        const bbox = e.geocode.bbox;
-        const poly = L.polygon([
-          [bbox.getSouthEast().lat, bbox.getSouthEast().lng],
-          [bbox.getNorthEast().lat, bbox.getNorthEast().lng],
-          [bbox.getNorthWest().lat, bbox.getNorthWest().lng],
-          [bbox.getSouthWest().lat, bbox.getSouthWest().lng],
-        ]);
-        this.map.fitBounds(poly.getBounds());
-      })
-      .addTo(this.map);
+    // (L.Control as any)
+    //   .geocoder({ defaultMarkGeocode: false, collapsed: false })
+    //   .on('markgeocode', (e: any) => {
+    //     const bbox = e.geocode.bbox;
+    //     const poly = L.polygon([
+    //       [bbox.getSouthEast().lat, bbox.getSouthEast().lng],
+    //       [bbox.getNorthEast().lat, bbox.getNorthEast().lng],
+    //       [bbox.getNorthWest().lat, bbox.getNorthWest().lng],
+    //       [bbox.getSouthWest().lat, bbox.getSouthWest().lng],
+    //     ]);
+    //     this.map.fitBounds(poly.getBounds());
+    //   })
+    //   .addTo(this.map);
 
     const drawnItems = new L.FeatureGroup();
     this.map.addLayer(drawnItems);
