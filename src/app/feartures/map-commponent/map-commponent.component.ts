@@ -4,12 +4,11 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-draw/dist/leaflet.draw.js';
 import { CommonModule } from '@angular/common';
 import { AreaNameModalComponent } from '../../core/modal/area-name-modal.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-map-commponent',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, AreaNameModalComponent],
   templateUrl: './map-commponent.component.html',
   styleUrls: ['./map-commponent.component.css'],
 })
@@ -28,7 +27,10 @@ export class MapCommponentComponent implements AfterViewInit {
     'Golshan Branch': '#4285F4',
   };
 
-  constructor(private modalService: NgbModal) {}
+  showModal = false;
+  modalLayer: any = null;
+
+  constructor() {}
 
   ngAfterViewInit(): void {
     this.initMap();
@@ -44,48 +46,52 @@ export class MapCommponentComponent implements AfterViewInit {
     this.map.addLayer(this.drawnItems);
 
     this.map.on('draw:created', (event: any) => {
-      this.activeDrawHandler = null;
       const layer = event.layer;
       this.drawnItems.addLayer(layer);
 
-      const modalRef = this.modalService.open(AreaNameModalComponent);
-      modalRef.result
-        .then((selectedCompany) => {
-          if (!selectedCompany) return;
-
-          (layer as any).areaName = selectedCompany;
-          const color = this.branchColors[selectedCompany] || '#000000';
-
-          if ((layer as any).setStyle) {
-            (layer as any).setStyle({
-              color: color,
-              fillColor: color,
-              fillOpacity: 0.5,
-            });
-          }
-
-          let center: L.LatLng | null = null;
-          if ((layer as any).getBounds) {
-            center = (layer as any).getBounds().getCenter();
-          } else if ((layer as any).getLatLng) {
-            center = (layer as any).getLatLng();
-          }
-
-          if (center) {
-            const textIcon = L.divIcon({
-              className: 'area-label',
-              html: `<div style="font-size:16px;font-weight:bold;color:white">${selectedCompany}</div>`,
-              iconSize: [0, 0],
-            });
-            L.marker(center, { icon: textIcon, interactive: false }).addTo(
-              this.map
-            );
-          }
-        })
-        .catch(() => {
-          this.drawnItems.removeLayer(layer);
-        });
+      this.modalLayer = layer;
+      this.showModal = true;
     });
+  }
+
+  // Modal callbacks
+  onModalClose() {
+    if (this.modalLayer) this.drawnItems.removeLayer(this.modalLayer);
+    this.showModal = false;
+    this.modalLayer = null;
+  }
+
+  onModalSave(selectedBranch: string) {
+    if (!this.modalLayer) return;
+
+    const color = this.branchColors[selectedBranch] || '#000000';
+
+    if ((this.modalLayer as any).setStyle) {
+      (this.modalLayer as any).setStyle({
+        color: color,
+        fillColor: color,
+        fillOpacity: 0.5,
+      });
+    }
+
+    let center: L.LatLng | null = null;
+    if ((this.modalLayer as any).getBounds) {
+      center = (this.modalLayer as any).getBounds().getCenter();
+    } else if ((this.modalLayer as any).getLatLng) {
+      center = (this.modalLayer as any).getLatLng();
+    }
+
+    if (center) {
+      const textIcon = L.divIcon({
+        className: 'area-label',
+        html: `<div style="font-size:16px;font-weight:bold;color:white">${selectedBranch}</div>`,
+        iconSize: [0, 0],
+      });
+      L.marker(center, { icon: textIcon, interactive: false }).addTo(this.map);
+    }
+
+    this.showModal = false;
+    this.modalLayer = null;
   }
 
   async onSearch(event: any) {

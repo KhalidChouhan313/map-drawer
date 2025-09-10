@@ -96,3 +96,10 @@
     </button>
   </div>
 </div>
+
+<app-area-name-modal
+  *ngIf="showModal"
+  [branches]="['DHA Branch', 'Malir Branch', 'Saddar Branch', 'Golshan Branch']"
+  (closed)="onModalClose()"
+  (saved)="onModalSave($event)"
+></app-area-name-modal>
