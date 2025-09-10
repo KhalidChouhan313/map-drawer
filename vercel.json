@@ -1,12 +1,5 @@
 {
-  "build": {
-    "env": {},
-    "envVarsInBuild": true,
-    "commands": {
-      "install": "npm install --legacy-peer-deps",
-      "build": "ng build --configuration production"
-    }
-  },
+  "version": 3,
   "builds": [
     {
       "src": "package.json",
@@ -15,6 +8,5 @@
         "distDir": "dist/myapp"
       }
     }
-  ],
-  "routes": [{ "src": "/(.*)", "dest": "/index.html" }]
+  ]
 }
