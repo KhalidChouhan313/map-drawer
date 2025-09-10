@@ -1,10 +1,18 @@
 {
+  "build": {
+    "env": {},
+    "envVarsInBuild": true,
+    "commands": {
+      "install": "npm install --legacy-peer-deps",
+      "build": "ng build --configuration production"
+    }
+  },
   "builds": [
     {
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "dist/MapDrawer"
+        "distDir": "dist/myapp"
       }
     }
   ],
