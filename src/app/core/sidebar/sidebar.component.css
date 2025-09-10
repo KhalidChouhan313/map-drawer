@@ -12,10 +12,23 @@
   justify-content: space-between;
   align-items: center;
 }
+.titleClass span {
+  color: rgba(0, 0, 0, 0.5);
+  font-family: "DM Sans";
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 300;
+  line-height: 19px; /* 146.154% */
+  letter-spacing: -0.26px;
+}
 .title {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 15px;
+  color: #000;
+  font-family: "DM Sans";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 22px; /* 110% */
+  letter-spacing: -0.4px;
 }
 
 .branch-list {
@@ -45,4 +58,15 @@
 .delete {
   cursor: pointer;
   color: #ff515c;
+}
+.mobileIcon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  color: white;
+  height: 40px;
+  flex-shrink: 0;
+  aspect-ratio: 1/1;
+  border-radius: 5px;
 }

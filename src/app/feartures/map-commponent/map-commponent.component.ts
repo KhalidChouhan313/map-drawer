@@ -1,144 +1,197 @@
 import { Component, AfterViewInit } from '@angular/core';
-import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import * as L from 'leaflet';
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-draw/dist/leaflet.draw.js';
-// import 'leaflet-control-geocoder';
+import { CommonModule } from '@angular/common';
+import { AreaNameModalComponent } from '../../core/modal/area-name-modal.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-map-commponent',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './map-commponent.component.html',
   styleUrls: ['./map-commponent.component.css'],
 })
 export class MapCommponentComponent implements AfterViewInit {
   private map!: L.Map;
+  private drawnItems = new L.FeatureGroup();
   private activeDrawHandler: any = null;
+
+  provider = new OpenStreetMapProvider();
+  suggestions: any[] = [];
+
+  branchColors: { [key: string]: string } = {
+    'DHA Branch': '#D736FF',
+    'Malir Branch': '#FFD84D',
+    'Saddar Branch': '#2EBC96',
+    'Golshan Branch': '#4285F4',
+  };
+
+  constructor(private modalService: NgbModal) {}
 
   ngAfterViewInit(): void {
     this.initMap();
   }
 
   private initMap(): void {
-    this.map = L.map('map').setView([51.505, -0.09], 4);
+    this.map = L.map('map').setView([24.8607, 67.0011], 11);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
     }).addTo(this.map);
-    const provider = new OpenStreetMapProvider();
-    const searchControl = new (GeoSearchControl as any)({
-      provider,
-      showMarker: true,
-      showPopup: false,
-      autoClose: true,
-      retainZoomLevel: false,
-      animateZoom: true,
-      searchLabel: 'Search for location',
-      keepResult: true,
-      position: 'topleft', // yeh important hai
-    });
-    this.map.addControl(searchControl);
 
-    // (L.Control as any)
-    //   .geocoder({ defaultMarkGeocode: false, collapsed: false })
-    //   .on('markgeocode', (e: any) => {
-    //     const bbox = e.geocode.bbox;
-    //     const poly = L.polygon([
-    //       [bbox.getSouthEast().lat, bbox.getSouthEast().lng],
-    //       [bbox.getNorthEast().lat, bbox.getNorthEast().lng],
-    //       [bbox.getNorthWest().lat, bbox.getNorthWest().lng],
-    //       [bbox.getSouthWest().lat, bbox.getSouthWest().lng],
-    //     ]);
-    //     this.map.fitBounds(poly.getBounds());
-    //   })
-    //   .addTo(this.map);
-
-    const drawnItems = new L.FeatureGroup();
-    this.map.addLayer(drawnItems);
-
-    const drawControl = new L.Control.Draw({
-      edit: { featureGroup: drawnItems },
-      draw: {
-        polygon: {
-          allowIntersection: true,
-          shapeOptions: { color: '#3388ff' },
-        },
-        polyline: { shapeOptions: { color: '#3388ff' } },
-        rectangle: {},
-        circle: {},
-        marker: {},
-      },
-    });
-    this.map.addControl(drawControl);
+    this.map.addLayer(this.drawnItems);
 
     this.map.on('draw:created', (event: any) => {
       this.activeDrawHandler = null;
       const layer = event.layer;
-      drawnItems.addLayer(layer);
+      this.drawnItems.addLayer(layer);
 
-      const name = prompt('Enter name for the Area:');
-      if (name) {
-        let center: L.LatLng | null = null;
+      const modalRef = this.modalService.open(AreaNameModalComponent);
+      modalRef.result
+        .then((selectedCompany) => {
+          if (!selectedCompany) return;
 
-        if ((layer as any).getBounds) {
-          center = (layer as any).getBounds().getCenter();
-        } else if ((layer as any).getLatLng) {
-          center = (layer as any).getLatLng();
-        }
+          (layer as any).areaName = selectedCompany;
+          const color = this.branchColors[selectedCompany] || '#000000';
 
-        if (center) {
-          const textIcon = L.divIcon({
-            className: 'area-label',
-            html: `<div style="
-              background: transparent;
-              width:100%;
-              border-radius:4px;
-              font-size:16px;        
-              font-weight:bold;
-              white-space: nowrap;">${name}</div>`,
-            iconSize: [0, 0],
-          });
-          L.marker(center, { icon: textIcon, interactive: false }).addTo(
-            this.map
-          );
-        }
-        (layer as any).areaName = name;
-        let coords: any;
-        if ((layer as any).getLatLngs) {
-          coords = (layer as any).getLatLngs()[0].map((ll: any) => ({
-            lat: ll.lat,
-            lng: ll.lng,
-          }));
-        } else if ((layer as any).getLatLng) {
-          const ll = (layer as any).getLatLng();
-          coords = { lat: ll.lat, lng: ll.lng };
-        }
+          if ((layer as any).setStyle) {
+            (layer as any).setStyle({
+              color: color,
+              fillColor: color,
+              fillOpacity: 0.5,
+            });
+          }
 
-        const geoData = {
-          name: name,
-          type:
-            layer instanceof (L.Draw as any).Polygon
-              ? 'polygon'
-              : layer instanceof (L.Draw as any).Polyline
-              ? 'polyline'
-              : 'marker',
-          coordinates: coords,
+          let center: L.LatLng | null = null;
+          if ((layer as any).getBounds) {
+            center = (layer as any).getBounds().getCenter();
+          } else if ((layer as any).getLatLng) {
+            center = (layer as any).getLatLng();
+          }
+
+          if (center) {
+            const textIcon = L.divIcon({
+              className: 'area-label',
+              html: `<div style="font-size:16px;font-weight:bold;color:white">${selectedCompany}</div>`,
+              iconSize: [0, 0],
+            });
+            L.marker(center, { icon: textIcon, interactive: false }).addTo(
+              this.map
+            );
+          }
+        })
+        .catch(() => {
+          this.drawnItems.removeLayer(layer);
+        });
+    });
+  }
+
+  async onSearch(event: any) {
+    const value = event.target.value;
+    if (value.length < 3) {
+      this.suggestions = [];
+      return;
+    }
+    try {
+      const results = await this.provider.search({ query: value });
+      this.suggestions = results;
+    } catch (err) {
+      console.error('search error', err);
+      this.suggestions = [];
+    }
+  }
+
+  selectLocation(s: any) {
+    this.suggestions = [];
+    if (s.y && s.x) {
+      this.map.setView([s.y, s.x], 14);
+      L.marker([s.y, s.x])
+        .addTo(this.map)
+        .bindPopup(s.label || '')
+        .openPopup();
+    }
+  }
+
+  enableDraw(type: string) {
+    if (this.activeDrawHandler) {
+      this.activeDrawHandler.disable();
+      this.activeDrawHandler = null;
+    }
+
+    let options: any;
+
+    switch (type) {
+      case 'polygon':
+        options = {
+          shapeOptions: {
+            color: '#2EBC96',
+            fillColor: '#2EBC96',
+            fillOpacity: 0.5,
+          },
         };
-
-        console.log('GeoData to save:', geoData);
-      }
-    });
-
-    this.map.on('draw:drawvertex', () => {
-      if (
-        this.activeDrawHandler &&
-        (this.activeDrawHandler instanceof (L.Draw as any).Polyline ||
-          this.activeDrawHandler instanceof (L.Draw as any).Polygon)
-      ) {
-        const latlngs = this.activeDrawHandler._markers.map((m: any) =>
-          m.getLatLng()
+        this.activeDrawHandler = new (L as any).Draw.Polygon(this.map, options);
+        break;
+      case 'rectangle':
+        options = {
+          shapeOptions: {
+            color: '#FFD84D',
+            fillColor: '#FFD84D',
+            fillOpacity: 0.5,
+          },
+        };
+        this.activeDrawHandler = new (L as any).Draw.Rectangle(
+          this.map,
+          options
         );
-        if (latlngs.length > 2) {
-          this.activeDrawHandler._finishShape();
-        }
-      }
-    });
+        break;
+      case 'polyline':
+        options = { shapeOptions: { color: '#2196F3', weight: 4 } };
+        this.activeDrawHandler = new (L as any).Draw.Polyline(
+          this.map,
+          options
+        );
+        break;
+      case 'circle':
+        options = {
+          shapeOptions: {
+            color: '#D736FF',
+            fillColor: '#D736FF',
+            fillOpacity: 0.4,
+          },
+        };
+        this.activeDrawHandler = new (L as any).Draw.Circle(this.map, options);
+        break;
+      case 'marker':
+        this.activeDrawHandler = new (L as any).Draw.Marker(this.map);
+        break;
+      case 'crosshair':
+        const center = this.map.getCenter();
+        L.marker(center, {
+          icon: L.divIcon({
+            className: 'crosshair-icon',
+            html: '<i class="fa-solid fa-crosshairs" style="color:red;font-size:20px;"></i>',
+          }),
+        }).addTo(this.drawnItems);
+        return;
+      case 'edit':
+        this.activeDrawHandler = new (L as any).EditToolbar.Edit(this.map, {
+          featureGroup: this.drawnItems,
+        });
+        break;
+    }
+
+    if (this.activeDrawHandler) {
+      this.activeDrawHandler.enable();
+    }
+  }
+
+  zoomIn() {
+    if (this.map) this.map.zoomIn();
+  }
+
+  zoomOut() {
+    if (this.map) this.map.zoomOut();
   }
 }

@@ -5,25 +5,94 @@
   </div>
 
   <div class="search-container">
-    <input type="text" placeholder="Search Locations" class="search-input" />
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input
+      type="text"
+      placeholder="Search Locations"
+      class="search-input"
+      (input)="onSearch($event)"
+    />
+    <ul *ngIf="suggestions.length" class="suggestions">
+      <li *ngFor="let s of suggestions" (click)="selectLocation(s)">
+        {{ s.label }}
+      </li>
+    </ul>
   </div>
 
   <div class="actions">
-    <button class="icon-btn" title="Edit">
-      <i class="material-icons">edit</i>
+    <span class="btnicon" title="edit" (click)="enableDraw('edit')">
+      <i class="fa-solid fa-pen-to-square"></i>
+    </span>
+    <span class="" title="Polygon" (click)="enableDraw('polygon')">
+      <i class="fa-solid fa-draw-polygon"></i>
+    </span>
+    <span class="" title="circle" (click)="enableDraw('circle')">
+      <i class="fa-solid fa-arrow-pointer"></i>
+    </span>
+    <span class="" title="Marker" (click)="zoomIn()">
+      <i class="fa-solid fa-plus"></i>
+    </span>
+    <span class="" title="Marker" (click)="zoomOut()">
+      <i class="fa-solid fa-minus"></i>
+    </span>
+  </div>
+</div>
+<div
+  id="map"
+  style="
+    height: calc(100vh - 60px);
+    width: 100%;
+    position: relative;
+    z-index: 0;
+  "
+>
+  <div
+    class="zoom-controls"
+    style="position: absolute; top: 10px; right: 10px; z-index: 1000"
+  >
+    <button class="zoom-in" (click)="zoomIn()">+</button>
+    <button class="zoom-out" (click)="zoomOut()">−</button>
+    <button class="zoom-out" (click)="enableDraw('rectangle')">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="17"
+        height="17"
+        viewBox="0 0 17 17"
+        fill="none"
+      >
+        <g clip-path="url(#clip0_4803_3626)">
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M0.944444 16.0556H5.20293C5.45904 16.0556 5.66667 16.2746 5.66667 16.5278C5.66667 16.7886 5.45144 17 5.20293 17H0.463734C0.337111 17 0.222334 16.9465 0.138649 16.8617C0.0517195 16.774 0 16.6592 0 16.5363V11.7971C0 11.541 0.219049 11.3333 0.472222 11.3333C0.733023 11.3333 0.944444 11.5486 0.944444 11.7971V16.0556ZM16.0556 16.0556H11.7971C11.5486 16.0556 11.3333 16.267 11.3333 16.5278C11.3333 16.781 11.541 17 11.7971 17H16.5363C16.6592 17 16.7739 16.9483 16.8586 16.8645C16.9465 16.7777 17 16.6629 17 16.5363V11.7971C17 11.5486 16.7886 11.3333 16.5278 11.3333C16.2746 11.3333 16.0556 11.541 16.0556 11.7971V16.0556ZM16.8614 0.138289C16.7777 0.0535494 16.6629 0 16.5363 0H11.7971C11.5486 0 11.3333 0.211421 11.3333 0.472222C11.3333 0.725396 11.541 0.944444 11.7971 0.944444H16.0556V5.20293C16.0556 5.45144 16.267 5.66667 16.5278 5.66667C16.781 5.66667 17 5.45904 17 5.20293V0.463734C17 0.340822 16.9483 0.226043 16.8644 0.14143L16.8614 0.138289ZM0.141445 0.135536C0.226057 0.0517111 0.34083 0 0.463734 0H5.20293C5.45904 0 5.66667 0.219049 5.66667 0.472222C5.66667 0.733023 5.45144 0.944444 5.20293 0.944444H0.944444V5.20293C0.944444 5.45904 0.725396 5.66667 0.472222 5.66667C0.211421 5.66667 0 5.45144 0 5.20293V0.463734C0 0.337105 0.0535553 0.222321 0.138303 0.138635L0.141445 0.135536Z"
+            fill="black"
+          />
+        </g>
+        <defs>
+          <clipPath id="clip0_4803_3626">
+            <rect width="17" height="17" fill="white" />
+          </clipPath>
+        </defs>
+      </svg>
     </button>
-    <button class="icon-btn" title="Fullscreen">
-      <i class="material-icons">fullscreen</i>
+    <button class="zoom-out" (click)="enableDraw('crosshair')">
+      <i class="fa-solid fa-crosshairs"></i>
     </button>
-    <button class="icon-btn" title="Select">
-      <i class="material-icons">pointer</i>
+  </div>
+  <div
+    class="left-controls"
+    style="position: absolute; top: 10px; left: 10px; z-index: 1000"
+  >
+    <button class="controlLeft" (click)="enableDraw('circle')">
+      <i class="fa-solid fa-arrow-pointer"></i> Select Tools
     </button>
-    <button class="icon-btn" title="Zoom In">
-      <i class="material-icons">add</i>
+    <button class="controlLeft" (click)="enableDraw('edit')">
+      <i class="fa-solid fa-pen-to-square"></i> Edit Layers
     </button>
-    <button class="icon-btn" title="Zoom Out">
-      <i class="material-icons">remove</i>
+
+    <button class="controlLeft" (click)="enableDraw('polygon')">
+      <i class="fa-solid fa-draw-polygon"></i>
+      Draw A Polygon
     </button>
   </div>
 </div>
-<div id="map" style="height: 100vh; width: 100%; "></div>
