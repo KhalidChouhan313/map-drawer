@@ -1,5 +1,6 @@
 /* map-commponent.component.css */
 /* styles.css ya apni map css mein */
+
 .leaflet-draw-toolbar a {
   background-image: url("/media/leaflet-draw/spritesheet.png") !important;
 }
