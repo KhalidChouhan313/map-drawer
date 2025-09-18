@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-control-geocoder';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
@@ -20,7 +20,7 @@ import { AreaNameModalComponent } from '../../core/modal/area-name-modal.compone
   templateUrl: './map-commponent.component.html',
   styleUrls: ['./map-commponent.component.css'],
 })
-export class MapCommponentComponent implements AfterViewInit {
+export class MapCommponentComponent implements AfterViewInit   {
   private map!: L.Map;
   private drawnItems = new L.FeatureGroup();
   private activeDrawHandler: any = null;
@@ -76,7 +76,6 @@ export class MapCommponentComponent implements AfterViewInit {
     });
   }
 
-  // Modal callbacks
   onModalClose() {
     if (this.modalLayer) this.drawnItems.removeLayer(this.modalLayer);
     this.showModal = false;
