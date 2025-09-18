@@ -1,6 +1,5 @@
 import { Component, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
-import 'leaflet-draw/dist/leaflet.draw.js';
 import 'leaflet-control-geocoder';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-draw/dist/leaflet.draw.js';
