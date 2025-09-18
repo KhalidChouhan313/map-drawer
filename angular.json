@@ -89,19 +89,21 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/assets",
+                "output": "assets"
               },
               {
                 "glob": "**/*",
                 "input": "node_modules/leaflet/dist/images",
-                "output": "/assets/leaflet/"
+                "output": "assets/leaflet"
               },
               {
                 "glob": "**/*",
                 "input": "node_modules/leaflet-draw/dist/images",
-                "output": "/assets/leaflet-draw/"
+                "output": "assets/leaflet-draw"
               }
             ],
+
             "styles": ["src/styles.css"],
             "scripts": []
           }
