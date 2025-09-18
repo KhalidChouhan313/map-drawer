@@ -1,9 +1,12 @@
 /* map-commponent.component.css */
+/* styles.css ya apni map css mein */
 .leaflet-draw-toolbar a {
-  background-image: url("/assets/leaflet-draw/spritesheet.png");
+  background-image: url("/media/leaflet-draw/spritesheet.png") !important;
 }
-.leaflet-draw-toolbar a:hover {
-  background-image: url("/assets/leaflet-draw/spritesheet.png");
+
+.leaflet-retina .leaflet-draw-toolbar a {
+  background-image: url("/media/leaflet-draw/spritesheet-2x.png") !important;
+  background-size: 240px 30px !important; /* retina ke liye */
 }
 
 :host ::ng-deep .leaflet-touch .leaflet-control-layers,

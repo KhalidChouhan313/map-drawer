@@ -1,14 +1,16 @@
 import { Component, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
+import 'leaflet-draw/dist/leaflet.draw.js';
+import 'leaflet-control-geocoder';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-draw/dist/leaflet.draw.js';
 import { CommonModule } from '@angular/common';
 import { AreaNameModalComponent } from '../../core/modal/area-name-modal.component';
 (window as any).L = L;
 (L.Icon.Default as any).mergeOptions({
-  iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
-  iconUrl: 'assets/leaflet/marker-icon.png',
-  shadowUrl: 'assets/leaflet/marker-shadow.png',
+  iconRetinaUrl: 'media/leaflet/marker-icon-2x.png',
+  iconUrl: 'media/leaflet/marker-icon.png',
+  shadowUrl: 'media/leaflet/marker-shadow.png',
 });
 
 @Component({
