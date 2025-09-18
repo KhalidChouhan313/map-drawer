@@ -5,6 +5,7 @@ import 'leaflet-draw/dist/leaflet.draw.js';
 import { CommonModule } from '@angular/common';
 import { AreaNameModalComponent } from '../../core/modal/area-name-modal.component';
 (window as any).L = L;
+
 @Component({
   selector: 'app-map-commponent',
   standalone: true,
@@ -44,6 +45,20 @@ export class MapCommponentComponent implements AfterViewInit {
     }).addTo(this.map);
 
     this.map.addLayer(this.drawnItems);
+    const drawControl = new (L as any).Control.Draw({
+      position: 'topleft',
+      draw: {
+        polygon: true,
+        rectangle: true,
+        circle: true,
+        polyline: true,
+        marker: true,
+      },
+      edit: {
+        featureGroup: this.drawnItems,
+      },
+    });
+    this.map.addControl(drawControl);
 
     this.map.on('draw:created', (event: any) => {
       const layer = event.layer;
@@ -120,78 +135,78 @@ export class MapCommponentComponent implements AfterViewInit {
     }
   }
 
-  enableDraw(type: string) {
-    if (this.activeDrawHandler) {
-      this.activeDrawHandler.disable();
-      this.activeDrawHandler = null;
-    }
+  // enableDraw(type: string) {
+  //   if (this.activeDrawHandler) {
+  //     this.activeDrawHandler.disable();
+  //     this.activeDrawHandler = null;
+  //   }
 
-    let options: any;
+  //   let options: any;
 
-    switch (type) {
-      case 'polygon':
-        options = {
-          shapeOptions: {
-            color: '#2EBC96',
-            fillColor: '#2EBC96',
-            fillOpacity: 0.5,
-          },
-        };
-        this.activeDrawHandler = new (L as any).Draw.Polygon(this.map, options);
-        break;
-      case 'rectangle':
-        options = {
-          shapeOptions: {
-            color: '#FFD84D',
-            fillColor: '#FFD84D',
-            fillOpacity: 0.5,
-          },
-        };
-        this.activeDrawHandler = new (L as any).Draw.Rectangle(
-          this.map,
-          options
-        );
-        break;
-      case 'polyline':
-        options = { shapeOptions: { color: '#2196F3', weight: 4 } };
-        this.activeDrawHandler = new (L as any).Draw.Polyline(
-          this.map,
-          options
-        );
-        break;
-      case 'circle':
-        options = {
-          shapeOptions: {
-            color: '#D736FF',
-            fillColor: '#D736FF',
-            fillOpacity: 0.4,
-          },
-        };
-        this.activeDrawHandler = new (L as any).Draw.Circle(this.map, options);
-        break;
-      case 'marker':
-        this.activeDrawHandler = new (L as any).Draw.Marker(this.map);
-        break;
-      case 'crosshair':
-        const center = this.map.getCenter();
-        L.marker(center, {
-          icon: L.divIcon({
-            className: 'crosshair-icon',
-            html: '<i class="fa-solid fa-crosshairs" style="color:red;font-size:20px;"></i>',
-          }),
-        }).addTo(this.drawnItems);
-        return;
-      case 'edit':
-        this.activeDrawHandler = new (L as any).EditToolbar.Edit(this.map, {
-          featureGroup: this.drawnItems,
-        });
-        break;
-    }
+  //   switch (type) {
+  //     case 'polygon':
+  //       options = {
+  //         shapeOptions: {
+  //           color: '#2EBC96',
+  //           fillColor: '#2EBC96',
+  //           fillOpacity: 0.5,
+  //         },
+  //       };
+  //       this.activeDrawHandler = new (L as any).Draw.Polygon(this.map, options);
+  //       break;
+  //     case 'rectangle':
+  //       options = {
+  //         shapeOptions: {
+  //           color: '#FFD84D',
+  //           fillColor: '#FFD84D',
+  //           fillOpacity: 0.5,
+  //         },
+  //       };
+  //       this.activeDrawHandler = new (L as any).Draw.Rectangle(
+  //         this.map,
+  //         options
+  //       );
+  //       break;
+  //     case 'polyline':
+  //       options = { shapeOptions: { color: '#2196F3', weight: 4 } };
+  //       this.activeDrawHandler = new (L as any).Draw.Polyline(
+  //         this.map,
+  //         options
+  //       );
+  //       break;
+  //     case 'circle':
+  //       options = {
+  //         shapeOptions: {
+  //           color: '#D736FF',
+  //           fillColor: '#D736FF',
+  //           fillOpacity: 0.4,
+  //         },
+  //       };
+  //       this.activeDrawHandler = new (L as any).Draw.Circle(this.map, options);
+  //       break;
+  //     case 'marker':
+  //       this.activeDrawHandler = new (L as any).Draw.Marker(this.map);
+  //       break;
+  //     case 'crosshair':
+  //       const center = this.map.getCenter();
+  //       L.marker(center, {
+  //         icon: L.divIcon({
+  //           className: 'crosshair-icon',
+  //           html: '<i class="fa-solid fa-crosshairs" style="color:red;font-size:20px;"></i>',
+  //         }),
+  //       }).addTo(this.drawnItems);
+  //       return;
+  //     case 'edit':
+  //       this.activeDrawHandler = new (L as any).EditToolbar.Edit(this.map, {
+  //         featureGroup: this.drawnItems,
+  //       });
+  //       break;
+  //   }
 
-    if (this.activeDrawHandler) {
-      this.activeDrawHandler.enable();
-    }
-  }
+  //   if (this.activeDrawHandler) {
+  //     this.activeDrawHandler.enable();
+  //   }
+  // }
 
   zoomIn() {
     if (this.map) this.map.zoomIn();
