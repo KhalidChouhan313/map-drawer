@@ -5,7 +5,11 @@ import 'leaflet-draw/dist/leaflet.draw.js';
 import { CommonModule } from '@angular/common';
 import { AreaNameModalComponent } from '../../core/modal/area-name-modal.component';
 (window as any).L = L;
-
+(L.Icon.Default as any).mergeOptions({
+  iconRetinaUrl: '/assets/leaflet/marker-icon-2x.png',
+  iconUrl: '/assets/leaflet/marker-icon.png',
+  shadowUrl: '/assets/leaflet/marker-shadow.png',
+});
 @Component({
   selector: 'app-map-commponent',
   standalone: true,

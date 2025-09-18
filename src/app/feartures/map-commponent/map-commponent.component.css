@@ -1,4 +1,11 @@
 /* map-commponent.component.css */
+.leaflet-draw-toolbar a {
+  background-image: url("/assets/leaflet-draw/spritesheet.png");
+}
+.leaflet-draw-toolbar a:hover {
+  background-image: url("/assets/leaflet-draw/spritesheet.png");
+}
+
 :host ::ng-deep .leaflet-touch .leaflet-control-layers,
 :host ::ng-deep .leaflet-touch .leaflet-bar {
   border: none !important;
@@ -157,7 +164,6 @@
   justify-content: center;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
-
 
 .zoom-in:hover,
 .zoom-out:hover {
