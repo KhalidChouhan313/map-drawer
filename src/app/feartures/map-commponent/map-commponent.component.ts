@@ -33,7 +33,9 @@ export class MapCommponentComponent implements AfterViewInit {
 
   async ngAfterViewInit() {
     (window as any).L = L;
-
+    await import('leaflet-draw');
+    await import('leaflet-control-geocoder');
+    console.log('L.Draw after import:', (L as any).Draw);
     this.initMap();
   }
 
@@ -122,6 +124,11 @@ export class MapCommponentComponent implements AfterViewInit {
   }
 
   enableDraw(type: string) {
+    if (!(L as any).Draw) {
+      console.error('L.Draw is not loaded yet!');
+      return;
+    }
+
     if (this.activeDrawHandler) {
       this.activeDrawHandler.disable();
       this.activeDrawHandler = null;
