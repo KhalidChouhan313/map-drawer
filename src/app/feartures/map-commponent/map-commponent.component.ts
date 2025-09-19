@@ -1,5 +1,5 @@
 import { Component, AfterViewInit } from '@angular/core';
-import * as L from 'leaflet';
+declare var L: any;
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-draw/dist/leaflet.draw.js';
 import { CommonModule } from '@angular/common';
@@ -33,8 +33,6 @@ export class MapCommponentComponent implements AfterViewInit {
 
   async ngAfterViewInit() {
     (window as any).L = L;
-    await import('leaflet-draw');
-    await import('leaflet-control-geocoder');
     console.log('L.Draw after import:', (L as any).Draw);
     this.initMap();
   }
