@@ -3,14 +3,17 @@ import * as L from 'leaflet';
 import 'leaflet-control-geocoder';
 import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-draw/dist/leaflet.draw.js';
-
+import markerIcon2x from 'src/assets/leaflet/marker-icon-2x.png';
+import markerIcon from 'src/assets/leaflet/marker-icon.png';
+import markerShadow from 'src/assets/leaflet/marker-shadow.png';
 import { CommonModule } from '@angular/common';
 import { AreaNameModalComponent } from '../../core/modal/area-name-modal.component';
 (window as any).L = L;
-(L.Icon.Default as any).mergeOptions({
-  iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
-  iconUrl: 'assets/leaflet/marker-icon.png',
-  shadowUrl: 'assets/leaflet/marker-shadow.png',
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
 });
 
 @Component({
@@ -20,7 +23,7 @@ import { AreaNameModalComponent } from '../../core/modal/area-name-modal.compone
   templateUrl: './map-commponent.component.html',
   styleUrls: ['./map-commponent.component.css'],
 })
-export class MapCommponentComponent implements AfterViewInit   {
+export class MapCommponentComponent implements AfterViewInit {
   private map!: L.Map;
   private drawnItems = new L.FeatureGroup();
   private activeDrawHandler: any = null;
@@ -41,7 +44,9 @@ export class MapCommponentComponent implements AfterViewInit   {
   constructor() {}
 
   ngAfterViewInit(): void {
-    this.initMap();
+    import('leaflet-draw').then(() => {
+      this.initMap();
+    });
   }
 
   private initMap(): void {
