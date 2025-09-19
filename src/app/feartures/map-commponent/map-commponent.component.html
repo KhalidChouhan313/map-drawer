@@ -5,7 +5,7 @@
   </div>
 
   <div class="search-container">
-    <!-- <img src="assets/images/marker-icon-2x.png" alt=""> -->
+    <img src="assets/images/" alt="" />
     <i class="fa-solid fa-magnifying-glass"></i>
     <input
       type="text"
@@ -80,22 +80,30 @@
       <i class="fa-solid fa-crosshairs"></i>
     </button> -->
   </div>
-  <!-- <div
-    class="left-controls"
-    style="position: absolute; top: 10px; left: 10px; z-index: 1000"
-  >
-    <button class="controlLeft" (click)="enableDraw('circle')">
-      <i class="fa-solid fa-arrow-pointer"></i> Select Tools
-    </button>
-    <button class="controlLeft" (click)="enableDraw('edit')">
-      <i class="fa-solid fa-pen-to-square"></i> Edit Layers
-    </button>
+  <!-- map-commponent.component.html -->
+  <div id="map" style="height: 100vh"></div>
 
-    <button class="controlLeft" (click)="enableDraw('polygon')">
-      <i class="fa-solid fa-draw-polygon"></i>
-      Draw A Polygon
+  <div class="custom-toolbar">
+    <button (click)="enableDraw('polyline')">
+      <i class="fa-solid fa-share-nodes"></i>
     </button>
-  </div> -->
+    <button (click)="enableDraw('polygon')">
+      <i class="fa-solid fa-draw-polygon"></i>
+    </button>
+    <button (click)="enableDraw('rectangle')">
+      <i class="fa-solid fa-square"></i>
+    </button>
+    <button (click)="enableDraw('circle')">
+      <i class="fa-solid fa-circle"></i>
+    </button>
+    <button (click)="enableDraw('marker')">
+      <i class="fa-solid fa-location-dot"></i>
+    </button>
+    <button (click)="enableDraw('edit')">
+      <i class="fa-solid fa-pen-to-square"></i>
+    </button>
+    <button (click)="deleteAll()"><i class="fa-solid fa-trash"></i></button>
+  </div>
 </div>
 
 <app-area-name-modal
