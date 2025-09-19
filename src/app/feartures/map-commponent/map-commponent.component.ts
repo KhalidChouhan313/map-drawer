@@ -4,7 +4,6 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-draw/dist/leaflet.draw.js';
 import { CommonModule } from '@angular/common';
 import { AreaNameModalComponent } from '../../core/modal/area-name-modal.component';
-(window as any).L = L;
 @Component({
   selector: 'app-map-commponent',
   standalone: true,
@@ -32,7 +31,9 @@ export class MapCommponentComponent implements AfterViewInit {
 
   constructor() {}
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit() {
+    (window as any).L = L;
+
     this.initMap();
   }
 
