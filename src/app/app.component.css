@@ -15,12 +15,12 @@ app-sidebar {
 }
 
 app-map-commponent {
-  width: 240px !important;
   flex: 1;
   position: relative;
   z-index: 1;
   margin-left: 5px;
   margin-top: 5px;
+  width: auto !important;
 }
 
 app-header {

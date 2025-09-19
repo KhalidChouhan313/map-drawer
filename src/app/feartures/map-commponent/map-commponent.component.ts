@@ -4,6 +4,7 @@ import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet-draw/dist/leaflet.draw.js';
 import { CommonModule } from '@angular/common';
 import { AreaNameModalComponent } from '../../core/modal/area-name-modal.component';
+import { BranchStateService } from '../../../services/branch-state.service';
 @Component({
   selector: 'app-map-commponent',
   standalone: true,
@@ -18,7 +19,8 @@ export class MapCommponentComponent implements AfterViewInit {
 
   provider = new OpenStreetMapProvider();
   suggestions: any[] = [];
-
+  selectedBranches: string[] = [];
+  availableBranches: string[] = [];
   branchColors: { [key: string]: string } = {
     'DHA Branch': '#D736FF',
     'Malir Branch': '#FFD84D',
@@ -29,7 +31,7 @@ export class MapCommponentComponent implements AfterViewInit {
   showModal = false;
   modalLayer: any = null;
 
-  constructor() {}
+  constructor(private branchState: BranchStateService) {}
 
   async ngAfterViewInit() {
     (window as any).L = L;
@@ -52,6 +54,10 @@ export class MapCommponentComponent implements AfterViewInit {
 
       this.modalLayer = layer;
       this.showModal = true;
+
+      this.availableBranches = Object.keys(this.branchColors).filter(
+        (branch) => !this.selectedBranches.includes(branch)
+      );
     });
   }
 
@@ -65,27 +71,33 @@ export class MapCommponentComponent implements AfterViewInit {
   onModalSave(selectedBranch: string) {
     if (!this.modalLayer) return;
 
-    const color = this.branchColors[selectedBranch] || '#000000';
+    if (this.selectedBranches.includes(selectedBranch)) {
+      alert('Sorry, this branch is already selected!');
+      return;
+    }
 
+    const color = this.branchColors[selectedBranch] || '#000000';
     if ((this.modalLayer as any).setStyle) {
       (this.modalLayer as any).setStyle({
-        color: color,
+        color,
         fillColor: color,
         fillOpacity: 0.5,
       });
     }
 
+    this.selectedBranches.push(selectedBranch);
+    this.branchState.selectBranch(selectedBranch);
+
     let center: L.LatLng | null = null;
-    if ((this.modalLayer as any).getBounds) {
+    if ((this.modalLayer as any).getBounds)
       center = (this.modalLayer as any).getBounds().getCenter();
-    } else if ((this.modalLayer as any).getLatLng) {
+    else if ((this.modalLayer as any).getLatLng)
       center = (this.modalLayer as any).getLatLng();
-    }
 
     if (center) {
       const textIcon = L.divIcon({
         className: 'area-label',
-        html: `<div style="font-size:16px;font-weight:bold;color:white">${selectedBranch}</div>`,
+        html: `<div style="font-size:16px;font-weight:bold;color:black;display:flex;align-items:center;justify-content:center; ">${selectedBranch}</div>`,
         iconSize: [0, 0],
       });
       L.marker(center, { icon: textIcon, interactive: false }).addTo(this.map);
@@ -138,8 +150,7 @@ export class MapCommponentComponent implements AfterViewInit {
       case 'polygon':
         options = {
           shapeOptions: {
-            color: '#2EBC96',
-            fillColor: '#2EBC96',
+            color: '#525252',
             fillOpacity: 0.5,
           },
         };
@@ -148,8 +159,8 @@ export class MapCommponentComponent implements AfterViewInit {
       case 'rectangle':
         options = {
           shapeOptions: {
-            color: '#FFD84D',
-            fillColor: '#FFD84D',
+            color: '#525252',
+            fillColor: '#525252',
             fillOpacity: 0.5,
           },
         };
@@ -159,7 +170,7 @@ export class MapCommponentComponent implements AfterViewInit {
         );
         break;
       case 'polyline':
-        options = { shapeOptions: { color: '#2196F3', weight: 4 } };
+        options = { shapeOptions: { color: '#525252', weight: 4 } };
         this.activeDrawHandler = new (L as any).Draw.Polyline(
           this.map,
           options
@@ -168,8 +179,8 @@ export class MapCommponentComponent implements AfterViewInit {
       case 'circle':
         options = {
           shapeOptions: {
-            color: '#D736FF',
-            fillColor: '#D736FF',
+            color: '#525252',
+            fillColor: '#525252',
             fillOpacity: 0.4,
           },
         };
@@ -204,6 +215,7 @@ export class MapCommponentComponent implements AfterViewInit {
   }
   deleteAll() {
     this.drawnItems.clearLayers();
+    this.selectedBranches = [];
   }
 
   zoomOut() {

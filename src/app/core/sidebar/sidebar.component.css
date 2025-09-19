@@ -55,9 +55,9 @@
   margin-right: 8px;
 }
 
-.delete {
+.Check {
   cursor: pointer;
-  color: #ff515c;
+  color: green;
 }
 .mobileIcon {
   display: flex;

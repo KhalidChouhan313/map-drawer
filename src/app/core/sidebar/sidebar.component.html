@@ -1,6 +1,6 @@
 <div class="sidebar">
   <div class="titleClass">
-    <div style="display: flex;">
+    <div style="display: flex">
       <h2 class="title">Operational Locations</h2>
       <span>4 Active </span>
     </div>
@@ -15,37 +15,15 @@
     </svg>
   </div>
   <ul class="branch-list">
-    <li class="branch-item purple">
-      <i
-        class="mobileIcon fas fa-building"
-        style="background-color: #d736ff"
-      ></i>
-      DHA Branch
-      <i class="delete far fa-trash-alt"></i>
-    </li>
-    <li class="branch-item yellow">
-      <i
-        class="mobileIcon fas fa-building"
-        style="background-color: #ffd84d"
-      ></i>
-      Malir Branch
-      <i class="delete far fa-trash-alt"></i>
-    </li>
-    <li class="branch-item green">
-      <i
-        class="mobileIcon fas fa-building"
-        style="background-color: #2ebc96"
-      ></i>
-      Saddar Branch
-      <i class="delete far fa-trash-alt"></i>
-    </li>
-    <li class="branch-item blue">
-      <i
-        class="mobileIcon fas fa-building"
-        style="background-color: #4285f4"
-      ></i>
-      Golshan Branch
-      <i class="delete far fa-trash-alt"></i>
+    <li *ngFor="let branch of branchList" class="branch-item">
+      <div style="display: flex; align-items: center">
+        <i
+          class="mobileIcon fas fa-building"
+          [style.background-color]="branch.color"
+        ></i>
+        {{ branch.name }}
+      </div>
+      <i *ngIf="isSelected(branch.name)" class="Check fa-solid fa-check"></i>
     </li>
   </ul>
 </div>

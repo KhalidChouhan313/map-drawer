@@ -1,26 +1,25 @@
-<div class="coverage-header">
-  <div class="title-section">
-    <h1>Coverage Map</h1>
-    <span class="subtitle">Karachi Metropolitan Area</span>
-  </div>
+<div class="container">
+  <div class="coverage-header">
+    <div class="title-section">
+      <h1>Coverage Map</h1>
+      <div class="search-container">
+        <img src="assets/images/" alt="" />
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input
+          type="text"
+          placeholder="Search Locations"
+          class="search-input"
+          (input)="onSearch($event)"
+        />
+        <ul *ngIf="suggestions.length" class="suggestions">
+          <li *ngFor="let s of suggestions" (click)="selectLocation(s)">
+            {{ s.label }}
+          </li>
+        </ul>
+      </div>
+    </div>
 
-  <div class="search-container">
-    <img src="assets/images/" alt="" />
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <input
-      type="text"
-      placeholder="Search Locations"
-      class="search-input"
-      (input)="onSearch($event)"
-    />
-    <ul *ngIf="suggestions.length" class="suggestions">
-      <li *ngFor="let s of suggestions" (click)="selectLocation(s)">
-        {{ s.label }}
-      </li>
-    </ul>
-  </div>
-
-  <!-- <div class="actions">
+    <!-- <div class="actions">
     <span class="btnicon" title="edit" (click)="enableDraw('edit')">
       <i class="fa-solid fa-pen-to-square"></i>
     </span>
@@ -37,23 +36,18 @@
       <i class="fa-solid fa-minus"></i>
     </span>
   </div> -->
-</div>
-<div
-  id="map"
-  style="
-    height: calc(100vh - 60px);
-    width: 100%;
-    position: relative;
-    z-index: 0;
-  "
->
+  </div>
   <div
-    class="zoom-controls"
-    style="position: absolute; top: 10px; right: 10px; z-index: 1000"
+    id="map"
+    style="height: 100vh; width: 100%; position: relative; z-index: 0"
   >
-    <button class="zoom-in" (click)="zoomIn()">+</button>
-    <button class="zoom-out" (click)="zoomOut()">−</button>
-    <!-- <button class="zoom-out" (click)="enableDraw('rectangle')">
+    <div
+      class="zoom-controls"
+      style="position: absolute; top: 10px; right: 10px; z-index: 1000"
+    >
+      <button class="zoom-in" (click)="zoomIn()">+</button>
+      <button class="zoom-out" (click)="zoomOut()">−</button>
+      <!-- <button class="zoom-out" (click)="enableDraw('rectangle')">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="17"
@@ -76,39 +70,39 @@
         </defs>
       </svg>
     </button> -->
-    <!-- <button class="zoom-out" (click)="enableDraw('crosshair')">
+      <!-- <button class="zoom-out" (click)="enableDraw('crosshair')">
       <i class="fa-solid fa-crosshairs"></i>
     </button> -->
-  </div>
-  <!-- map-commponent.component.html -->
-  <div id="map" style="height: 100vh"></div>
+    </div>
+    <!-- map-commponent.component.html -->
 
-  <div class="custom-toolbar">
-    <button (click)="enableDraw('polyline')">
-      <i class="fa-solid fa-share-nodes"></i>
-    </button>
-    <button (click)="enableDraw('polygon')">
-      <i class="fa-solid fa-draw-polygon"></i>
-    </button>
-    <button (click)="enableDraw('rectangle')">
-      <i class="fa-solid fa-square"></i>
-    </button>
-    <button (click)="enableDraw('circle')">
-      <i class="fa-solid fa-circle"></i>
-    </button>
-    <button (click)="enableDraw('marker')">
-      <i class="fa-solid fa-location-dot"></i>
-    </button>
-    <button (click)="enableDraw('edit')">
-      <i class="fa-solid fa-pen-to-square"></i>
-    </button>
-    <button (click)="deleteAll()"><i class="fa-solid fa-trash"></i></button>
+    <div class="custom-toolbar">
+      <!-- <button (click)="enableDraw('polyline')">
+        <i class="fa-solid fa-share-nodes"></i>
+      </button> -->
+      <button (click)="enableDraw('polygon')">
+        <i class="fa-solid fa-draw-polygon"></i>
+      </button>
+      <button (click)="enableDraw('rectangle')">
+        <i class="fa-solid fa-square"></i>
+      </button>
+      <button (click)="enableDraw('circle')">
+        <i class="fa-solid fa-circle"></i>
+      </button>
+      <!-- <button (click)="enableDraw('marker')">
+        <i class="fa-solid fa-location-dot"></i>
+      </button> -->
+      <button (click)="enableDraw('edit')">
+        <i class="fa-solid fa-pen-to-square"></i>
+      </button>
+      <button (click)="deleteAll()"><i class="fa-solid fa-trash"></i></button>
+    </div>
   </div>
 </div>
 
 <app-area-name-modal
   *ngIf="showModal"
-  [branches]="['DHA Branch', 'Malir Branch', 'Saddar Branch', 'Golshan Branch']"
+  [branches]="availableBranches"
   (closed)="onModalClose()"
   (saved)="onModalSave($event)"
 ></app-area-name-modal>
