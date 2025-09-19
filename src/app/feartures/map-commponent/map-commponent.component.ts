@@ -41,12 +41,10 @@ export class MapCommponentComponent implements AfterViewInit {
   constructor() {}
 
   ngAfterViewInit(): void {
-    import('leaflet-draw')
-      .then((DrawModule: any) => {
-        console.log('Leaflet Draw loaded:', DrawModule);
-        this.initMap();
-      })
-      .catch((err) => console.error('Leaflet Draw failed to load', err));
+    import('leaflet-draw').then((DrawModule: any) => {
+      (window as any).L = L;
+      this.initMap();
+    });
   }
 
   private initMap(): void {
