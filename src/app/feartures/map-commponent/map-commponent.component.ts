@@ -1,12 +1,16 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
-import * as L from 'leaflet';
-import 'leaflet-control-geocoder';
-import { OpenStreetMapProvider } from 'leaflet-geosearch';
-import 'leaflet-draw/dist/leaflet.draw.js';
-
+import { Component, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { OpenStreetMapProvider } from 'leaflet-geosearch';
 import { AreaNameModalComponent } from '../../core/modal/area-name-modal.component';
+
+import * as L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+
+import 'leaflet-draw/dist/leaflet.draw.css';
+import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
+
 (window as any).L = L;
+
 (L.Icon.Default as any).mergeOptions({
   iconRetinaUrl: 'assets/leaflet/marker-icon-2x.png',
   iconUrl: 'assets/leaflet/marker-icon.png',
@@ -41,7 +45,10 @@ export class MapCommponentComponent implements AfterViewInit {
   constructor() {}
 
   ngAfterViewInit(): void {
-    import('leaflet-draw').then((DrawModule: any) => {
+    Promise.all([
+      import('leaflet-draw'),
+      import('leaflet-control-geocoder'),
+    ]).then(() => {
       (window as any).L = L;
       this.initMap();
     });
